@@ -20,6 +20,18 @@
             }
         }
 
+        public ConsoleColor HighlightBg {
+            set {
+                this.highlightBg = value;
+            }
+        }
+        
+        public ConsoleColor HighlightFg {
+            set {
+                this.highlightFg = value;
+            }
+        }
+
         public Menu(List<String> elements) {
             foreach(var element in elements) {
                 if(this.longestElementSize < element.Length)
@@ -37,8 +49,6 @@
         public int Show() {
             ConsoleColor prevBg = Console.BackgroundColor;
             ConsoleColor prevFg = Console.ForegroundColor;
-            Console.BackgroundColor = this.background;
-            Console.ForegroundColor = this.foreground;
 
             int currentPosition = 0;
 
@@ -46,10 +56,50 @@
 
             // TODO: Showing and keypressing mechanic
 
-            Console.ForegroundColor = prevFg;
-            Console.BackgroundColor = prevBg;
+            while(true) {
+                Console.SetCursorPosition(0, 0);
+                for(int i = 0; i < this.elements.Count; i++) {
+                    if(i == currentPosition) {
+                        Console.BackgroundColor = this.highlightBg;
+                        Console.ForegroundColor = this.highlightFg;
+                    } else {
+                        Console.BackgroundColor = this.background;
+                        Console.ForegroundColor = this.foreground;
+                    }
 
-            return -1;
+                    string s = this.elements[i];
+
+                    Console.WriteLine(s.PadLeft(5).PadRight(s.Length + 5 + this.longestElementSize));
+                }
+
+                ConsoleKey pressed = Console.ReadKey().Key;
+
+                if(pressed == ConsoleKey.UpArrow) {
+                    if(currentPosition > 0) {
+                        currentPosition--;
+                    }
+                }
+
+                if(pressed == ConsoleKey.DownArrow) {
+                    if(currentPosition < this.elements.Count - 1) {
+                        currentPosition++;
+                    }
+                }
+
+                if(pressed == ConsoleKey.Enter) {
+                    Console.ForegroundColor = prevFg;
+                    Console.BackgroundColor = prevBg;
+                    Console.Clear();
+                    return currentPosition;
+                }
+
+                if(pressed == ConsoleKey.Escape) {
+                    Console.ForegroundColor = prevFg;
+                    Console.BackgroundColor = prevBg;
+                    Console.Clear();
+                    return -1;
+                }
+            }
         }
     }
 }
