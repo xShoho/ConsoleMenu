@@ -1,6 +1,6 @@
 ﻿namespace Shoho.ConsoleMenu {
     public class Menu {
-        private List<String> elements = new List<String> {};
+        private string[] elements = { };
         private ConsoleColor foreground;
         private ConsoleColor background;
         private ConsoleColor highlightFg;
@@ -25,19 +25,20 @@
                 this.highlightBg = value;
             }
         }
-        
+
         public ConsoleColor HighlightFg {
             set {
                 this.highlightFg = value;
             }
         }
 
-        public Menu(List<String> elements) {
-            foreach(var element in elements) {
-                if(this.longestElementSize < element.Length)
-                    this.longestElementSize = element.Length;
+        public Menu(string[] elements) {
+            this.elements = elements;
 
-                this.elements.Add(element);
+            for(int i = 0; i < this.elements.Length; i++) {
+                if(this.longestElementSize < this.elements[i].Length) {
+                    this.longestElementSize = this.elements[i].Length;
+                }
             }
 
             this.foreground = ConsoleColor.White;
@@ -52,13 +53,9 @@
 
             int currentPosition = 0;
 
-            Console.Clear();
-
-            // TODO: Showing and keypressing mechanic
-
             while(true) {
                 Console.SetCursorPosition(0, 0);
-                for(int i = 0; i < this.elements.Count; i++) {
+                for(int i = 0; i < this.elements.Length; i++) {
                     if(i == currentPosition) {
                         Console.BackgroundColor = this.highlightBg;
                         Console.ForegroundColor = this.highlightFg;
@@ -69,7 +66,7 @@
 
                     string s = this.elements[i];
 
-                    Console.WriteLine(s.PadLeft(5).PadRight(s.Length + 5 + this.longestElementSize));
+                    Console.WriteLine(s.PadLeft(5).PadRight(s.Length + 5 + this.longestElementSize + 3));
                 }
 
                 ConsoleKey pressed = Console.ReadKey().Key;
@@ -81,7 +78,7 @@
                 }
 
                 if(pressed == ConsoleKey.DownArrow) {
-                    if(currentPosition < this.elements.Count - 1) {
+                    if(currentPosition < this.elements.Length - 1) {
                         currentPosition++;
                     }
                 }
